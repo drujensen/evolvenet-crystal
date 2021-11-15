@@ -5,7 +5,7 @@ module EvolveNet
 
     def initialize(network : Network, size : Int32 = 10)
       @networks = Array(Network).new(size) { network.clone.randomize }
-      @rate = (size * 0.1).to_i
+      @ten_pct = (size * 0.1).to_i
     end
 
     def evolve(data : Array(Array(Array(Number))),
@@ -18,10 +18,10 @@ module EvolveNet
         @networks.sort! { |a, b| a.mse <=> b.mse }
 
         # kill bottom 10%
-        @networks = @networks[..@rate]
+        @networks = @networks[..@ten_pct]
 
         # clone top 10%
-        @networks[0..@rate].each { |n| @networks << n.clone }
+        @networks[0..@ten_pct].each { |n| @networks << n.clone }
 
         # mutate
         @networks.each { |n| n.mutate(mutation_rate) }
