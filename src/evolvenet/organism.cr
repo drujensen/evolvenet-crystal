@@ -1,15 +1,15 @@
 module EvolveNet
   class Organism
     property :networks
-    @ten_pct : Int32
+    @pct : Int32
 
-    def initialize(network : Network, size : Int32 = 10, pct : Int32 = 10)
+    def initialize(network : Network, size : Int32 = 100, pct : Int32 = 20)
       @networks = Array(Network).new(size) { network.clone.randomize }
-      @ten_pct = (size * (pct/100)).to_i
+      @pct = (size * (pct/100)).to_i
     end
 
     def evolve(data : Array(Array(Array(Number))),
-               generations : Int32,
+               generations : Int32 = 10000,
                mutation_rate : Float64 = 0.01)
       (1..generations).each do
         @networks.each do |network|
@@ -18,10 +18,10 @@ module EvolveNet
         @networks.sort! { |a, b| a.error <=> b.error }
 
         # kill bottom 10%
-        @networks = @networks[..@ten_pct]
+        @networks = @networks[..@pct]
 
         # clone top 10%
-        @networks[0..@ten_pct].each { |n| @networks << n.clone }
+        @networks[0..@pct].each { |n| @networks << n.clone }
 
         # mutate
         @networks.each { |n| n.mutate(mutation_rate) }
