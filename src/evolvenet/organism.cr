@@ -1,7 +1,7 @@
 module EvolveNet
   class Organism
     property :networks, :rate
-    @rate : Int32
+    @ten_pct : Int32
 
     def initialize(network : Network, size : Int32 = 10)
       @networks = Array(Network).new(size) { network.clone.randomize }

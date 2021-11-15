@@ -11,7 +11,7 @@ module EvolveNet
       @layers << Layer.new(type, size)
     end
 
-    def connect_layers
+    def fully_connect
       @layers.each_with_index do |layer, index|
         if layer.type != :input
           prev_layer = @layers[index - 1]
