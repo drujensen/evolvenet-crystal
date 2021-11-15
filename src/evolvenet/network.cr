@@ -1,9 +1,9 @@
 module EvolveNet
   class Network
-    property :layers, :mse
+    property :layers, :error
 
     def initialize
-      @mse = 0_f64
+      @error = 0_f64
       @layers = Array(Layer).new
     end
 
@@ -47,7 +47,7 @@ module EvolveNet
           sum += (exp - act)**2
         end
       end
-      @mse = sum / data.size
+      @error = sum / data.size
     end
 
     def randomize

@@ -15,8 +15,8 @@ describe EvolveNet do
       [[1, 1], [0]],
     ]
 
-    organism = EvolveNet::Organism.new(network, 100)
-    organism.evolve(data, 10000, 0.05)
+    organism = EvolveNet::Organism.new(network, 100, 20)
+    organism.evolve(data, 10000, 0.01)
     network = organism.evolved_network
 
     correct = 0
@@ -42,8 +42,8 @@ describe EvolveNet do
 
     data = EvolveNet::Data.new_with_csv_input_target("spec/test_data/iris.csv", 0..3, 4)
 
-    organism = EvolveNet::Organism.new(network, 100)
-    organism.evolve(data.data, 10000, 0.05)
+    organism = EvolveNet::Organism.new(network, 100, 20)
+    organism.evolve(data.data, 10000, 0.1)
     network = organism.evolved_network
 
     correct = 0

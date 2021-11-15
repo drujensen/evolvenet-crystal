@@ -4,10 +4,6 @@ version: 0.1.0
 authors:
   - Dru Jensen <drujensen@gmail.com>
 
-targets:
-  evolvenet:
-    main: src/evolvenet.cr
-
 crystal: 1.2.2
 
 license: MIT
