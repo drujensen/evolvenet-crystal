@@ -6,11 +6,11 @@ module EvolveNet
     end
 
     def randomize
-      @weight = rand(-0.1_f64..0.1_f64)
+      @weight = rand(-1_f64..1_f64)
     end
 
-    def evolve
-      @weight += rand(-0.001_f64..0.001_f64)
+    def mutate(mutation_rate : Float64)
+      @weight += rand(-mutation_rate..mutation_rate)
     end
   end
 end

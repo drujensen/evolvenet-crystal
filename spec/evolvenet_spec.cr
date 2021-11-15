@@ -1,11 +1,7 @@
 require "./spec_helper"
 
-def sigmoid(value : Float64) : Float64
-  (1.0/(1.0 + Math::E**(-value))).to_f64
-end
-
 describe EvolveNet do
-  it "works" do
+  it "xor" do
     network = EvolveNet::Network.new
     network.add_layer(:input, 2)
     network.add_layer(:hidden, 2)
@@ -19,8 +15,8 @@ describe EvolveNet do
       [[1, 1], [0]],
     ]
 
-    organism = EvolveNet::Organism.new(network)
-    organism.evolve(training_data)
+    organism = EvolveNet::Organism.new(network, 100)
+    organism.evolve(training_data, 1000, 0.05)
     network = organism.evolved_network
 
     puts network.run([0, 0])

@@ -8,23 +8,28 @@ module EvolveNet
       @rate = (size * 0.1).to_i
     end
 
-    def evolve(data : Array(Array(Array(Number))))
-      (0..1000).each do
+    def evolve(data : Array(Array(Array(Number))),
+               generations : Int32,
+               mutation_rate : Float64 = 0.01)
+      (1..generations).each do
         @networks.each do |network|
           network.evaluate(data)
         end
-        @networks.sort! { |a, b| b.mse <=> a.mse }
+        @networks.sort! { |a, b| a.mse <=> b.mse }
 
         # kill bottom 10%
         @networks = @networks[..@rate]
+
         # clone top 10%
         @networks[0..@rate].each { |n| @networks << n.clone }
 
-        @networks.each { |n| n.evolve }
+        # mutate
+        @networks.each { |n| n.mutate(mutation_rate) }
       end
     end
 
     def evolved_network
+      @networks.sort! { |a, b| a.mse <=> b.mse }
       @networks.first
     end
   end

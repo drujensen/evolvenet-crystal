@@ -25,9 +25,9 @@ module EvolveNet
       @synapses.each { |s| s.randomize }
     end
 
-    def evolve
-      @bias += rand(-0.001_f64..0.001_f64)
-      @synapses.each { |s| s.evolve }
+    def mutate(mutation_rate : Float64)
+      @bias += rand(-mutation_rate..mutation_rate)
+      @synapses.each { |s| s.mutate(mutation_rate) }
     end
 
     def activate(value : Number)

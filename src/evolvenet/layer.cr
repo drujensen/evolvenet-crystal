@@ -18,8 +18,8 @@ module EvolveNet
       @neurons.each { |n| n.randomize }
     end
 
-    def evolve
-      @neurons.each { |n| n.evolve }
+    def mutate(mutation_rate : Float64)
+      @neurons.each { |n| n.mutate(mutation_rate) }
     end
   end
 end

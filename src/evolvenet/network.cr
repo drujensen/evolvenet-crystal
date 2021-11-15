@@ -55,8 +55,8 @@ module EvolveNet
       self
     end
 
-    def evolve
-      @layers.each { |l| l.evolve }
+    def mutate(mutation_rate : Float64)
+      @layers.each { |l| l.mutate(mutation_rate) }
       self
     end
 
