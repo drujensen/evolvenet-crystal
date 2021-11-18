@@ -1,15 +1,15 @@
 module EvolveNet
   class Neuron
-    property :activation, :bias, :synapses
+    property :activation, :bias, :synapses, :function
 
-    def initialize
+    def initialize(@function : Symbol)
       @activation = 0.0_f64
       @bias = 0.0_f64
       @synapses = Array(Synapse).new
     end
 
     def clone(prev_layer : Layer? = nil)
-      neuron = Neuron.new
+      neuron = Neuron.new(@function)
       neuron.activation = @activation
       neuron.bias = @bias
       if prev_layer
@@ -36,7 +36,25 @@ module EvolveNet
 
     def activate
       sum = @synapses.sum { |s| s.weight * s.neuron.activation }
-      @activation = sigmoid(sum + @bias)
+      if @function == :none
+        @activation = none(sum + @bias)
+      elsif @function == :relu
+        @activation = relu(sum + @bias)
+      else
+        @activation = sigmoid(sum + @bias)
+      end
+    end
+
+    def none(value : Number) : Float64
+      value.to_f64
+    end
+
+    def relu(value : Number) : Float64
+      if value < 0
+        (0).to_f64
+      else
+        value.to_f64
+      end
     end
 
     def sigmoid(value : Number) : Float64

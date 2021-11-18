@@ -1,13 +1,13 @@
 module EvolveNet
   class Layer
-    property :type, :neurons
+    property :type, :neurons, :size, :function
 
-    def initialize(@type : Symbol, size : Int32 = 0)
-      @neurons = Array(Neuron).new(size) { Neuron.new }
+    def initialize(@type : Symbol, size : Int32 = 0, @function : Symbol = :sigmoid)
+      @neurons = Array(Neuron).new(size) { Neuron.new(@function) }
     end
 
     def clone(prev_layer : Layer? = nil)
-      layer = Layer.new(@type)
+      layer = Layer.new(@type, 0, @function)
       @neurons.each do |neuron|
         layer.neurons << neuron.clone(prev_layer)
       end
