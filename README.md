@@ -15,12 +15,34 @@ The network uses a simple evolutionary process:
 ## Installation
 
 add to your shards.yml
-```
-
+```yaml
+dependencies:
+  evolvenet:
+    github: drujensen/evolvenet
 ```
 
 ## Usage
 
+xor example
+```
+data = [
+  [[0, 0], [0]],
+  [[0, 1], [1]],
+  [[1, 0], [1]],
+  [[1, 1], [0]],
+]
+
+network = EvolveNet::Network.new
+network.add_layer(:input, 2)
+network.add_layer(:hidden, 2)
+network.add_layer(:output, 1)
+network.fully_connect
+
+organism = EvolveNet::Organism.new(network)
+network = organism.evolve(data)
+
+puts network.run([0, 0])
+```
 
 ## Development
 

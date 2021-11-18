@@ -12,12 +12,6 @@ module EvolveNet
     property :normalized_outputs, :normalized_inputs, :labels, :outputs
     getter :inputs
 
-    # @data_pairs :
-    # Takes a path to a CSV file, a range of inputs and the index of the target column.
-    # Returns a SHAInet::Data object.
-    # ```
-    # data = SHAInet::Data.new_with_csv_input_target("iris.csv", 0..3, 4)
-    # ```
     def self.new_with_csv_input_target(csv_file_path, input_column_range, target_column)
       inputs = Array(Array(Float64)).new
       outputs = Array(Array(Float64)).new
