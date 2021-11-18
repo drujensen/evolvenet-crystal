@@ -7,8 +7,8 @@ module EvolveNet
       @layers = Array(Layer).new
     end
 
-    def add_layer(type : Symbol, size : Int32)
-      @layers << Layer.new(type, size)
+    def add_layer(type : Symbol, size : Int32, function : Symbol = :sigmoid)
+      @layers << Layer.new(type, size, function)
     end
 
     def fully_connect
