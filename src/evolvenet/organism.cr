@@ -1,45 +1,45 @@
 module EvolveNet
   class Organism
     property :networks
-    @pct : Int32
+    @one_forth : Int32 = 1
+    @two_forth : Int32 = 1
+    @three_forth : Int32 = 1
 
-    def initialize(network : Network, size : Int32 = 10, pct : Float32 = 0.2)
+    def initialize(network : Network, size : Int32 = 10)
+      raise "size needs to be greater than 4" if size < 4
       @networks = Array(Network).new(size) { network.clone.randomize }
-      @pct = (size * pct).to_i
+      @one_forth = (size * 0.25).to_i
+      @two_forth = (@one_forth * 2).to_i
+      @three_forth = (@one_forth * 3).to_i
     end
 
     def evolve(data : Array(Array(Array(Number))),
-               generations : Int32 = 10000)
-      mutation_rate = 1_f64
-      average_error = 1_f64
-      (1..generations).each do |gen|
-        @networks.each do |network|
-          network.evaluate(data)
-        end
+               generations : Int32 = 1000000,
+               error_threshold : Float64 = 0.000001,
+               log_each : Int32 = 1000)
+      (0...generations).each do |gen|
+        @networks.each { |n| n.evaluate(data) }
         @networks.sort! { |a, b| a.error <=> b.error }
 
-        # kill bottom 10%
-        @networks = @networks[..@pct]
-
-        # clone top 10%
-        @networks[0..@pct].each { |n| @networks << n.clone }
-
-        # mutate
-        @networks.each { |n| n.mutate(mutation_rate) }
-
-        # update mutation rate based on error rate
-        average_error = @networks.sum { |n| n.error } / @networks.size
-        mutation_rate = average_error * 2
-
-        # break if below 0.001
-        if average_error < 0.001
-          puts "generation: #{gen} average error: #{average_error.round(6)} below 0.001. breaking."
+        error : Float64 = @networks[0].error
+        if error <= error_threshold
+          puts "generation: #{gen} error: #{error.round(6)}. below threshold. breaking."
           break
+        elsif gen % log_each == 0
+          puts "generation: #{gen} error: #{error.round(6)}"
         end
 
-        if gen % 100 == 0
-          puts "generation: #{gen} average error: #{average_error.round(6)}"
-        end
+        # randomize 3rd quarter
+        @networks[@two_forth...@three_forth].each { |n| n.randomize }
+
+        # kill bottom quarter
+        @networks = @networks[..@one_forth]
+
+        # clone top quarter
+        @networks[0..@one_forth].each { |n| @networks << n.clone }
+
+        # mutate all but the best network
+        (1...@networks.size).each { |n| @networks[n].mutate }
       end
 
       @networks.sort! { |a, b| a.error <=> b.error }

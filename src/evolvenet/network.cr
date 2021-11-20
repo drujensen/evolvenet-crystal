@@ -3,7 +3,7 @@ module EvolveNet
     property :layers, :error
 
     def initialize
-      @error = 0_f64
+      @error = 1_f64
       @layers = Array(Layer).new
     end
 
@@ -51,12 +51,13 @@ module EvolveNet
     end
 
     def randomize
+      @error = 1_f64
       @layers.each { |l| l.randomize }
       self
     end
 
-    def mutate(mutation_rate : Float64)
-      @layers.each { |l| l.mutate(mutation_rate) }
+    def mutate
+      @layers.each { |l| l.mutate(@error) }
       self
     end
 
