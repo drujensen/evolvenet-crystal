@@ -3,9 +3,9 @@ module EvolveNet
     property :networks
     @pct : Int32
 
-    def initialize(network : Network, size : Int32 = 10, pct : Int32 = 20)
+    def initialize(network : Network, size : Int32 = 10, pct : Float32 = 0.2)
       @networks = Array(Network).new(size) { network.clone.randomize }
-      @pct = (size * (pct/100)).to_i
+      @pct = (size * pct).to_i
     end
 
     def evolve(data : Array(Array(Array(Number))),
@@ -29,7 +29,7 @@ module EvolveNet
 
         # update mutation rate based on error rate
         average_error = @networks.sum { |n| n.error } / @networks.size
-        mutation_rate = average_error * 4
+        mutation_rate = average_error * 2
 
         # break if below 0.001
         if average_error < 0.001
