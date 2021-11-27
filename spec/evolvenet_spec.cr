@@ -14,23 +14,14 @@ describe EvolveNet do
       [[1, 0], [1]],
       [[1, 1], [0]],
     ]
+    training = EvolveNet::Data.new(data)
+    training.normalize_min_max
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(data)
-    network.punctuate(1)
+    network = organism.evolve(training.normalized_data)
 
-    correct = 0
-    data.each do |data_point|
-      result = network.run(data_point[0])
-      expected = data_point[1]
-      error_sum = 0.0
-      result.size.times do |i|
-        error_sum += (result[i] - expected[i]).abs
-      end
-      correct += 1 if error_sum < 0.1
-    end
-    accuracy = (correct.to_f64 / data.size)
-    puts "xor: #{correct} / #{data.size}, Accuracy: #{(accuracy*100).round(3)}%"
+    puts "works with xor"
+    training.confusion_matrix(network)
   end
 
   it "works with iris" do
@@ -40,11 +31,12 @@ describe EvolveNet do
     network.add_layer(:output, 3, :sigmoid)
     network.fully_connect
 
-    data = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/../spec/test_data/iris.csv", 0..3, 4)
+    training = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/../spec/test_data/iris.csv", 0..3, 4)
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(data.normalized_data, 50000)
+    network = organism.evolve(training.normalized_data, 50000, 0.0000001, 100)
 
-    data.confusion_matrix(network)
+    puts "works with iris"
+    training.confusion_matrix(network)
   end
 end

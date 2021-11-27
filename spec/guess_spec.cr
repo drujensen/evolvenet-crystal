@@ -19,8 +19,7 @@ describe EvolveNet do
     network.fully_connect
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data)
-    network.punctuate(2)
+    network = organism.evolve(training.raw_data, 100000)
 
     puts "guesses your number"
     (1..10).each do |idx|
@@ -52,8 +51,7 @@ describe EvolveNet do
     network.fully_connect
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data)
-    network.punctuate(2)
+    network = organism.evolve(training.raw_data, 100000)
 
     puts "guesses your number multiplied by 2"
     (1..10).each do |idx|
@@ -84,8 +82,7 @@ describe EvolveNet do
     network.fully_connect
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data)
-    network.punctuate(1)
+    network = organism.evolve(training.raw_data, 100000)
 
     puts "guesses your number multiplied by 2 plus 5"
     (1..10).each do |idx|
@@ -115,9 +112,8 @@ describe EvolveNet do
     network.add_layer(:output, 1, :relu)
     network.fully_connect
 
-    organism = EvolveNet::Organism.new(network, 10000)
+    organism = EvolveNet::Organism.new(network, 500)
     network = organism.evolve(training.raw_data, 10000, 0.01, 100)
-    network.punctuate(1)
 
     puts "guesses your number squared"
     (1..10).each do |idx|

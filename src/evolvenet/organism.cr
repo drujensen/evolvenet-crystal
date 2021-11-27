@@ -5,8 +5,8 @@ module EvolveNet
     @two_forth : Int32 = 1
     @three_forth : Int32 = 1
 
-    def initialize(network : Network, size : Int32 = 10)
-      raise "size needs to be greater than 4" if size < 4
+    def initialize(network : Network, size : Int32 = 16)
+      raise "size needs to be greater than 16" if size < 16
       @networks = Array(Network).new(size) { network.clone.randomize }
       @one_forth = (size * 0.25).to_i
       @two_forth = (@one_forth * 2).to_i
@@ -14,8 +14,8 @@ module EvolveNet
     end
 
     def evolve(data : Array(Array(Array(Number))),
-               generations : Int32 = 500000,
-               error_threshold : Float64 = 0.00000001,
+               generations : Int32 = 10000,
+               error_threshold : Float64 = 0.0,
                log_each : Int32 = 1000)
       (0...generations).each do |gen|
         @networks.each { |n| n.evaluate(data) }
@@ -23,10 +23,10 @@ module EvolveNet
 
         error : Float64 = @networks[0].error
         if error <= error_threshold
-          puts "generation: #{gen} error: #{error.round(6)}. below threshold. breaking."
+          puts "generation: #{gen} error: #{error}. below threshold. breaking."
           break
         elsif gen % log_each == 0
-          puts "generation: #{gen} error: #{error.round(6)}"
+          puts "generation: #{gen} error: #{error}"
         end
 
         # randomize 3rd quarter
@@ -38,8 +38,13 @@ module EvolveNet
         # clone top quarter
         @networks[0..@one_forth].each { |n| @networks << n.clone }
 
-        # mutate all but the best network
-        (1...@networks.size).each { |n| @networks[n].mutate }
+        # punctuate all but top in order
+        @networks[1..3].each_with_index do |n, i|
+          n.punctuate(i - 1)
+        end
+
+        # mutate all but the best and punctuated networks
+        (4...@networks.size).each { |n| @networks[n].mutate }
       end
 
       @networks.sort! { |a, b| a.error <=> b.error }
