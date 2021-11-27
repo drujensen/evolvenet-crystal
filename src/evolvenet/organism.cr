@@ -14,8 +14,8 @@ module EvolveNet
     end
 
     def evolve(data : Array(Array(Array(Number))),
-               generations : Int32 = 1000000,
-               error_threshold : Float64 = 0.000001,
+               generations : Int32 = 500000,
+               error_threshold : Float64 = 0.00000001,
                log_each : Int32 = 1000)
       (0...generations).each do |gen|
         @networks.each { |n| n.evaluate(data) }

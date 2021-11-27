@@ -30,6 +30,11 @@ module EvolveNet
       @synapses.each { |s| s.mutate(mutation_rate) }
     end
 
+    def punctuate(pos : Int32)
+      @bias = @bias.round(pos)
+      @synapses.each { |s| s.punctuate(pos) }
+    end
+
     def activate(value : Number)
       @activation = value
     end
@@ -40,8 +45,10 @@ module EvolveNet
         @activation = none(sum + @bias)
       elsif @function == :relu
         @activation = relu(sum + @bias)
-      else
+      elsif @function == :sigmoid
         @activation = sigmoid(sum + @bias)
+      else
+        raise "activation function #{@function} is not supported"
       end
     end
 

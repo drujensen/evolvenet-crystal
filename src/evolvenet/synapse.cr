@@ -12,5 +12,9 @@ module EvolveNet
     def mutate(mutation_rate : Float64)
       @weight += rand(-mutation_rate..mutation_rate)
     end
+
+    def punctuate(pos : Int32)
+      @weight = @weight.round(pos)
+    end
   end
 end

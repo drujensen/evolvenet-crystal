@@ -9,8 +9,7 @@ module EvolveNet
     @ymax : Int32
     @ymin : Int32
 
-    property :normalized_outputs, :normalized_inputs, :labels, :outputs
-    getter :inputs
+    property :normalized_outputs, :normalized_inputs, :labels, :inputs, :outputs
 
     def self.new_with_csv_input_target(csv_file_path, input_column_range, target_column)
       inputs = Array(Array(Float64)).new
@@ -31,7 +30,19 @@ module EvolveNet
       d
     end
 
-    def initialize(@inputs : Array(Array(Float64)), @outputs : Array(Array(Float64)))
+    def initialize(data : Array(Array(Array(Number))))
+      inputs = data.map { |row| row[0].map { |col| col.as(Number) } }
+      outputs = data.map { |row| row[1].map { |col| col.as(Number) } }
+      initialize(inputs, outputs)
+    end
+
+    def initialize(raw_inputs : Array(Array(Float64)), raw_outputs : Array(Array(Float64)))
+      inputs = raw_inputs.map { |row| row.map { |col| col.as(Number) } }
+      outputs = raw_outputs.map { |row| row.map { |col| col.as(Number) } }
+      initialize(inputs, outputs)
+    end
+
+    def initialize(@inputs : Array(Array(Number)), @outputs : Array(Array(Number)))
       @ymax = 1
       @ymin = 0
       @yrange = @ymax - @ymin
@@ -47,7 +58,7 @@ module EvolveNet
       @normalized_outputs = Array(Array(Float64)).new
     end
 
-    def data
+    def normalized_data
       arr = Array(Array(Array(Float64))).new
       @normalized_inputs.each_with_index do |_, i|
         arr << [@normalized_inputs[i], @normalized_outputs[i]]
@@ -56,24 +67,45 @@ module EvolveNet
     end
 
     def raw_data
-      arr = Array(Array(Array(Float64))).new
+      arr = Array(Array(Array(Number))).new
       @inputs.each_with_index do |_, i|
         arr << [@inputs[i], @outputs[i]]
       end
       arr
     end
 
-    def normalize_min_max(data : Array(Array(Float64)))
-      normalized_data = Array(Array(Float64)).new
-
-      # Get min-max
-      data.transpose.each { |a| @i_max << a.max; @i_min << a.min }
-
-      data.each do |row|
-        normalized_data << normalize_inputs(row)
+    def set_zero_to_average(cols = Array[Int32])
+      avg = Array(Float64).new
+      # Get inputs sum
+      cols.each do |col|
+        sum = 0_f64
+        cnt = 0
+        @inputs.each do |row|
+          if row[col] != 0
+            sum += row[col]
+            cnt += 1
+          end
+        end
+        avg << sum / cnt
       end
 
-      normalized_data
+      # Set to average if zero
+      @inputs.each do |row|
+        cols.each_with_index do |col, idx|
+          if row[col] == 0
+            row[col] = avg[idx]
+          end
+        end
+      end
+    end
+
+    def one_hot_encoder
+    end
+
+    def label_encoder
+    end
+
+    def ordinal_encoder
     end
 
     def normalize_min_max
@@ -164,12 +196,12 @@ module EvolveNet
     # Receives an array of labels (String or Symbol) and sets them for this Data object
     def labels=(label_array)
       @labels = label_array.map(&.to_s)
-      Log.info { "Labels are #{@labels.join(", ")}" } if self.class.name == "SHAInet::Data"
+      Log.info { "Labels are #{@labels.join(", ")}" } if self.class.name == "EvolveNet::Data"
     end
 
     # Takes a label as a String and returns the corresponding output array
     def array_for_label(a_label)
-      @labels.map { |label| a_label == label ? 1.to_f64 : 0.to_f64 }
+      @labels.map { |label| a_label == label ? 1.as(Number) : 0.as(Number) }
     end
 
     # Takes an output array of 0,1s and returns the corresponding label
@@ -191,6 +223,36 @@ module EvolveNet
       end
 
       data
+    end
+
+    def confusion_matrix(model)
+      tn = tp = fn = fp = 0
+
+      # determine accuracy
+      @normalized_inputs.each_with_index do |value, idx|
+        results = model.run(value)
+        if results[0] < 0.5
+          if @normalized_outputs[idx][0] < 0.5
+            tn += 1
+          else
+            fn += 1
+          end
+        else
+          if @normalized_outputs[idx][0] < 0.5
+            fp += 1
+          else
+            tp += 1
+          end
+        end
+      end
+
+      puts "Test size: #{@inputs.size}"
+      puts "----------------------"
+      puts "TN: #{tn} | FP: #{fp}"
+      puts "----------------------"
+      puts "FN: #{fn} | TP: #{tp}"
+      puts "----------------------"
+      puts "Accuracy: #{(tn + tp) / @inputs.size.to_f}"
     end
   end
 end

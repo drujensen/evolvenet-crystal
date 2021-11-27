@@ -36,6 +36,27 @@ module EvolveNet
       network
     end
 
+    def randomize
+      @error = 1_f64
+      @layers.each { |l| l.randomize }
+      self
+    end
+
+    def mutate
+      @layers.each { |l| l.mutate(@error) }
+      self
+    end
+
+    def punctuate(pos : Int32)
+      @layers.each { |l| l.punctuate(pos) }
+      self
+    end
+
+    def run(data : Array(Number))
+      @layers.each { |l| l.activate(data) }
+      @layers.last.neurons.map { |n| n.activation }
+    end
+
     def evaluate(data : Array(Array(Array(Number))))
       sum = 0_f64
       data.each do |row|
@@ -48,30 +69,6 @@ module EvolveNet
         end
       end
       @error = sum / data.size
-    end
-
-    def randomize
-      @error = 1_f64
-      @layers.each { |l| l.randomize }
-      self
-    end
-
-    def mutate
-      @layers.each { |l| l.mutate(@error) }
-      self
-    end
-
-    def run(data : Array(Number))
-      @layers.each do |layer|
-        layer.neurons.each_with_index do |neuron, idx|
-          if layer.type == :input
-            neuron.activate(data[idx])
-          else
-            neuron.activate
-          end
-        end
-      end
-      @layers.last.neurons.map { |n| n.activation }
     end
   end
 end
