@@ -14,7 +14,6 @@ describe EvolveNet do
 
     network = EvolveNet::Network.new
     network.add_layer(:input, 1, :none)
-    network.add_layer(:hidden, 2, :none)
     network.add_layer(:output, 1, :none)
     network.fully_connect
 
@@ -29,8 +28,6 @@ describe EvolveNet do
     puts "#{100} = #{network.run([100])[0].round_even.to_i}"
     puts "#{1000} = #{network.run([1000])[0].round_even.to_i}"
     puts "#{10000} = #{network.run([10000])[0].round_even.to_i}"
-    puts "#{1000000} = #{network.run([1000000])[0].round_even.to_i}"
-    puts "#{10000000} = #{network.run([10000000])[0].round_even.to_i}"
   end
 
   it "guesses your number multiplied by 2" do
@@ -46,7 +43,6 @@ describe EvolveNet do
 
     network = EvolveNet::Network.new
     network.add_layer(:input, 1, :none)
-    network.add_layer(:hidden, 2, :none)
     network.add_layer(:output, 1, :none)
     network.fully_connect
 
@@ -61,7 +57,6 @@ describe EvolveNet do
     puts "#{100} = #{network.run([100])[0].round_even.to_i}"
     puts "#{1000} = #{network.run([1000])[0].round_even.to_i}"
     puts "#{10000} = #{network.run([10000])[0].round_even.to_i}"
-    puts "#{100000} = #{network.run([100000])[0].round_even.to_i}"
   end
 
   it "guesses your number multiplied by 2 plus 5" do
@@ -77,7 +72,6 @@ describe EvolveNet do
 
     network = EvolveNet::Network.new
     network.add_layer(:input, 1, :none)
-    network.add_layer(:hidden, 2, :none)
     network.add_layer(:output, 1, :none)
     network.fully_connect
 
@@ -92,7 +86,6 @@ describe EvolveNet do
     puts "#{100} = #{network.run([100])[0].round_even.to_i}"
     puts "#{1000} = #{network.run([1000])[0].round_even.to_i}"
     puts "#{10000} = #{network.run([10000])[0].round_even.to_i}"
-    puts "#{100000} = #{network.run([100000])[0].round_even.to_i}"
   end
 
   it "guesses your number squared" do
@@ -106,14 +99,12 @@ describe EvolveNet do
     training = EvolveNet::Data.new(input, output)
 
     network = EvolveNet::Network.new
-    network.add_layer(:input, 1, :relu)
-    network.add_layer(:hidden, 8, :relu)
-    network.add_layer(:hidden, 8, :relu)
-    network.add_layer(:output, 1, :relu)
+    network.add_layer(:input, 1, :none)
+    network.add_layer(:output, 1, :none)
     network.fully_connect
 
-    organism = EvolveNet::Organism.new(network, 500)
-    network = organism.evolve(training.raw_data, 10000, 0.01, 100)
+    organism = EvolveNet::Organism.new(network)
+    network = organism.evolve(training.raw_data, 10000)
 
     puts "guesses your number squared"
     (1..10).each do |idx|
@@ -123,6 +114,5 @@ describe EvolveNet do
     puts "#{100} = #{network.run([100])[0].round_even.to_i}"
     puts "#{1000} = #{network.run([1000])[0].round_even.to_i}"
     puts "#{10000} = #{network.run([10000])[0].round_even.to_i}"
-    puts "#{100000} = #{network.run([100000])[0].round_even.to_i}"
   end
 end

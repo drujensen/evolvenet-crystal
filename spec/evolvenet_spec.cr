@@ -34,7 +34,7 @@ describe EvolveNet do
     training = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/../spec/test_data/iris.csv", 0..3, 4)
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.normalized_data, 50000, 0.0000001, 100)
+    network = organism.evolve(training.normalized_data, 10000, 0.01, 100)
 
     puts "works with iris"
     training.confusion_matrix(network)

@@ -60,9 +60,8 @@ module EvolveNet
     def evaluate(data : Array(Array(Array(Number))))
       sum = 0_f64
       data.each do |row|
-        test_data = row[0]
+        actual = run(row[0])
         expected = row[1]
-        actual = run(test_data)
         expected.each_with_index do |exp, idx|
           act = actual[idx]
           sum += (exp - act)**2
