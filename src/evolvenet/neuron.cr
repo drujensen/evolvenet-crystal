@@ -40,13 +40,15 @@ module EvolveNet
     end
 
     def activate
-      sum = @synapses.sum { |s| (s.neuron.activation * s.neuron.activation * s.a_weight) + (s.neuron.activation * s.b_weight) }
+      sum = @synapses.sum { |s| (s.a_weight * s.neuron.activation * s.neuron.activation) + (s.b_weight * s.neuron.activation) }
       if @function == :none
         @activation = none(sum + @bias)
       elsif @function == :relu
         @activation = relu(sum + @bias)
       elsif @function == :sigmoid
         @activation = sigmoid(sum + @bias)
+      elsif @function == :tanh
+        @activation = tanh(sum + @bias)
       else
         raise "activation function #{@function} is not supported"
       end
@@ -57,15 +59,15 @@ module EvolveNet
     end
 
     def relu(value : Number) : Float64
-      if value < 0
-        (0).to_f64
-      else
-        value.to_f64
-      end
+      value < 0 ? 0.to_f64 : value.to_f64
     end
 
     def sigmoid(value : Number) : Float64
       (1.0/(1.0 + Math::E**(-value))).to_f64
+    end
+
+    def tanh(value : Number) : Float64
+      ((Math::E**(value) - Math::E**(-value))/(Math::E**(value) + Math::E**(-value))).to_f64
     end
   end
 end

@@ -67,7 +67,7 @@ module EvolveNet
           sum += (exp - act)**2
         end
       end
-      @error = sum / data.size
+      @error = sum / (2 * data.size)
     end
   end
 end
