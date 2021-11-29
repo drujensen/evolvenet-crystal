@@ -12,13 +12,9 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(data)
 
-    network = EvolveNet::BasicNetwork.new
-    network.add_layer(:input, 1, :none)
-    network.add_layer(:output, 1, :none)
-    network.fully_connect
-
+    network = EvolveNet::LinearNetwork.new
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data, 100000)
+    network = organism.evolve(training.raw_data)
 
     puts "guesses your number"
     (1..10).each do |idx|
@@ -41,13 +37,9 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(data)
 
-    network = EvolveNet::BasicNetwork.new
-    network.add_layer(:input, 1, :none)
-    network.add_layer(:output, 1, :none)
-    network.fully_connect
-
+    network = EvolveNet::LinearNetwork.new
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data, 100000)
+    network = organism.evolve(training.raw_data)
 
     puts "guesses your number multiplied by 2"
     (1..10).each do |idx|
@@ -70,11 +62,7 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(data)
 
-    network = EvolveNet::BasicNetwork.new
-    network.add_layer(:input, 1, :none)
-    network.add_layer(:output, 1, :none)
-    network.fully_connect
-
+    network = EvolveNet::LinearNetwork.new
     organism = EvolveNet::Organism.new(network)
     network = organism.evolve(training.raw_data, 100000)
 
@@ -98,11 +86,7 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(input, output)
 
-    network = EvolveNet::BasicNetwork.new
-    network.add_layer(:input, 1, :none)
-    network.add_layer(:output, 1, :none)
-    network.fully_connect
-
+    network = EvolveNet::QuadradicNetwork.new
     organism = EvolveNet::Organism.new(network)
     network = organism.evolve(training.raw_data, 10000)
 

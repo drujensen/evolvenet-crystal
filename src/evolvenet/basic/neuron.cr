@@ -3,8 +3,8 @@ module EvolveNet
     property :activation, :bias, :synapses, :function
 
     def initialize(@function : Symbol)
-      @activation = 0.0_f64
-      @bias = 0.0_f64
+      @activation = 0_f64
+      @bias = 0_f64
       @synapses = Array(Synapse).new
     end
 
@@ -14,7 +14,7 @@ module EvolveNet
       neuron.bias = @bias
       if prev_layer
         prev_layer.neurons.each_with_index do |prev_neuron, index|
-          neuron.synapses << Synapse.new(prev_neuron, @synapses[index].a_weight, @synapses[index].b_weight)
+          neuron.synapses << Synapse.new(prev_neuron, @synapses[index].weight)
         end
       end
       neuron
@@ -40,7 +40,7 @@ module EvolveNet
     end
 
     def activate
-      sum = @synapses.sum { |s| (s.a_weight * s.neuron.activation * s.neuron.activation) + (s.b_weight * s.neuron.activation) }
+      sum = @synapses.sum { |s| s.weight * s.neuron.activation }
       if @function == :none
         @activation = none(sum + @bias)
       elsif @function == :relu
