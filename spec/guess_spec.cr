@@ -12,7 +12,7 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(data)
 
-    network = EvolveNet::Network.new
+    network = EvolveNet::BasicNetwork.new
     network.add_layer(:input, 1, :none)
     network.add_layer(:output, 1, :none)
     network.fully_connect
@@ -41,7 +41,7 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(data)
 
-    network = EvolveNet::Network.new
+    network = EvolveNet::BasicNetwork.new
     network.add_layer(:input, 1, :none)
     network.add_layer(:output, 1, :none)
     network.fully_connect
@@ -70,7 +70,7 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(data)
 
-    network = EvolveNet::Network.new
+    network = EvolveNet::BasicNetwork.new
     network.add_layer(:input, 1, :none)
     network.add_layer(:output, 1, :none)
     network.fully_connect
@@ -98,7 +98,7 @@ describe EvolveNet do
 
     training = EvolveNet::Data.new(input, output)
 
-    network = EvolveNet::Network.new
+    network = EvolveNet::BasicNetwork.new
     network.add_layer(:input, 1, :none)
     network.add_layer(:output, 1, :none)
     network.fully_connect
