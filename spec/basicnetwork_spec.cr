@@ -1,11 +1,11 @@
 require "./spec_helper"
 
-describe EvolveNet do
+describe EvolveNet::BasicNetwork do
   it "works with xor" do
     network = EvolveNet::BasicNetwork.new
-    network.add_layer(:input, 2, :sigmoid)
-    network.add_layer(:hidden, 2, :sigmoid)
-    network.add_layer(:output, 1, :sigmoid)
+    network.add_layer(:input, 2)
+    network.add_layer(:hidden, 2)
+    network.add_layer(:output, 1)
     network.fully_connect
 
     data = [
@@ -26,15 +26,15 @@ describe EvolveNet do
 
   it "works with iris" do
     network = EvolveNet::BasicNetwork.new
-    network.add_layer(:input, 4, :sigmoid)
-    network.add_layer(:hidden, 5, :sigmoid)
-    network.add_layer(:output, 3, :sigmoid)
+    network.add_layer(:input, 4)
+    network.add_layer(:hidden, 5)
+    network.add_layer(:output, 3)
     network.fully_connect
 
     training = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/../spec/test_data/iris.csv", 0..3, 4)
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.normalized_data, 10000, 0.01, 100)
+    network = organism.evolve(training.normalized_data, 10000, 0.01)
 
     puts "works with iris"
     training.confusion_matrix(network)
