@@ -1,5 +1,5 @@
 module EvolveNet
-  class BasicNetwork < Network
+  class NeuralNetwork < Network
     property :layers
     property error : Float64
 
@@ -26,7 +26,7 @@ module EvolveNet
     end
 
     def clone
-      network = BasicNetwork.new
+      network = NeuralNetwork.new
       @layers.each_with_index do |layer, index|
         if index == 0
           network.layers << layer.clone

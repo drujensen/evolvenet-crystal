@@ -1,8 +1,8 @@
 require "./spec_helper"
 
-describe EvolveNet::BasicNetwork do
+describe EvolveNet::NeuralNetwork do
   it "works with xor" do
-    network = EvolveNet::BasicNetwork.new
+    network = EvolveNet::NeuralNetwork.new
     network.add_layer(:input, 2)
     network.add_layer(:hidden, 2)
     network.add_layer(:output, 1)
@@ -25,7 +25,7 @@ describe EvolveNet::BasicNetwork do
   end
 
   it "works with iris" do
-    network = EvolveNet::BasicNetwork.new
+    network = EvolveNet::NeuralNetwork.new
     network.add_layer(:input, 4)
     network.add_layer(:hidden, 5)
     network.add_layer(:output, 3)

@@ -1,46 +1,50 @@
-require "./network"
-
-# y = mx + b
+# y = ax**2 + bx + c
 module EvolveNet
-  class LinearNetwork < Network
+  class QuadradicNetwork < Network
     property error : Float64
-    property m : Float64
+    property a : Float64
     property b : Float64
+    property c : Float64
 
     def initialize
       @error = 1_f64
-      @m = 0_f64
+      @a = 0_f64
       @b = 0_f64
+      @c = 0_f64
     end
 
     def clone
-      network = LinearNetwork.new
-      network.m = @m
+      network = QuadradicNetwork.new
+      network.a = @a
       network.b = @b
+      network.c = @c
       network
     end
 
     def randomize
-      @m = rand(-1_f64..1_f64)
+      @a = rand(-1_f64..1_f64)
       @b = rand(-1_f64..1_f64)
+      @c = rand(-1_f64..1_f64)
       self
     end
 
     def mutate
-      @m += rand(-@error..@error)
+      @a += rand(-@error..@error)
       @b += rand(-@error..@error)
+      @c += rand(-@error..@error)
       self
     end
 
     def punctuate(pos : Int32)
-      @m = @m.round(pos)
+      @a = @a.round(pos)
       @b = @b.round(pos)
+      @c = @c.round(pos)
       self
     end
 
     def run(data : Array(Number))
       x = data[0]
-      [(@m * x) + @b]
+      [(@a * x**2) + (@b * x) + @c]
     end
 
     def evaluate(data : Array(Array(Array(Number))))
