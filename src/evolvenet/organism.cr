@@ -17,12 +17,16 @@ module EvolveNet
                generations : Int32 = 10000,
                error_threshold : Float64 = 0.0,
                log_each : Int32 = 1000)
-      channel = Channel(Nil).new
+      channel = Channel(Float64).new
 
       (0..generations).each do |gen|
         @networks.each do |n|
-          n.evaluate(data)
+          spawn do
+            n.evaluate(data)
+            channel.send(n.error)
+          end
         end
+        @networks.size.times { channel.receive }
         @networks.sort! { |a, b| a.error <=> b.error }
 
         error : Float64 = @networks[0].error
@@ -33,11 +37,11 @@ module EvolveNet
           puts "generation: #{gen} error: #{error}"
         end
 
-        # randomize 3rd quarter
-        @networks[@two_forth...@three_forth].each { |n| n.randomize }
+        # randomize one bottom row
+        @networks[@three_forth].randomize
 
         # kill bottom quarter
-        @networks = @networks[..@one_forth]
+        @networks = @networks[0..@three_forth]
 
         # clone top quarter
         @networks[0..@one_forth].each { |n| @networks << n.clone }
@@ -48,7 +52,7 @@ module EvolveNet
         end
 
         # mutate all but the best and punctuated networks
-        (4...@networks.size).each { |n| @networks[n].mutate }
+        (1...@networks.size).each { |n| @networks[n].mutate }
       end
 
       @networks.sort! { |a, b| a.error <=> b.error }
