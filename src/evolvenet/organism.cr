@@ -17,8 +17,16 @@ module EvolveNet
                generations : Int32 = 10000,
                error_threshold : Float64 = 0.0,
                log_each : Int32 = 1000)
-      (0...generations).each do |gen|
-        @networks.each { |n| n.evaluate(data) }
+      channel = Channel(Float64).new
+
+      generations.times do |gen|
+        @networks.each do |n|
+          spawn do
+            n.evaluate(data)
+            channel.send(n.error)
+          end
+        end
+        @networks.size.times { channel.receive }
         @networks.sort! { |a, b| a.error <=> b.error }
 
         error : Float64 = @networks[0].error

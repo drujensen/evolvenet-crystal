@@ -8,14 +8,12 @@ module EvolveNet
       @synapses = Array(Synapse).new
     end
 
-    def clone(prev_layer : Layer? = nil)
+    def clone
       neuron = Neuron.new(@function)
       neuron.activation = @activation
       neuron.bias = @bias
-      if prev_layer
-        prev_layer.neurons.each_with_index do |prev_neuron, index|
-          neuron.synapses << Synapse.new(prev_neuron, @synapses[index].weight)
-        end
+      @synapses.each do |synapse|
+        neuron.synapses << synapse.clone
       end
       neuron
     end
@@ -39,8 +37,8 @@ module EvolveNet
       @activation = value
     end
 
-    def activate
-      sum = @synapses.sum { |s| s.weight * s.neuron.activation }
+    def activate(prev_layer : Layer)
+      sum = @synapses.sum { |s| s.weight * prev_layer.neurons[s.neuron_index].activation }
       if @function == :none
         @activation = none(sum + @bias)
       elsif @function == :relu

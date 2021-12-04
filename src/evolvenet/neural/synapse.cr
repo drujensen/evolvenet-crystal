@@ -1,8 +1,12 @@
 module EvolveNet
   class Synapse
-    property :neuron, :weight
+    property :neuron_index, :weight
 
-    def initialize(@neuron : Neuron, @weight : Float64 = 0.0_f64)
+    def initialize(@neuron_index : Int32, @weight : Float64 = 0.0_f64)
+    end
+
+    def clone
+      Synapse.new(@neuron_index, @weight)
     end
 
     def randomize

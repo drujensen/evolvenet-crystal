@@ -12,13 +12,39 @@ module EvolveNet
       @layers << Layer.new(type, size, function)
     end
 
+    def add_layer(type : Symbol, width : Int32, height : Int32, depth : Int32, function : Symbol = :relu)
+      if type == :conv && @layers.last.width != width + 2 && @layers.last.height != height + 2
+        raise "padding not supported yet. width and height need to be 2 smaller than previous layer"
+      end
+      @layers << Layer.new(type, width, height, depth, function)
+    end
+
     def fully_connect
       @layers.each_with_index do |layer, index|
-        if layer.type != :input
-          prev_layer = @layers[index - 1]
+        prev_layer = @layers[index - 1]
+
+        if layer.type == :conv
+          layer.width.times do |width|
+            layer.height.times do |height|
+              layer.depth.times do |depth|
+                pos = width * height * depth
+                3.times.each do |x|
+                  3.times.each do |y|
+                    prev_layer.depth.times do |d|
+                      neuron_index = (width + x) * (height + y) * d
+                      layer.neurons[pos].synapses << Synapse.new(neuron_index)
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        if layer.type == :hidden || layer.type == :output
           layer.neurons.each do |neuron|
-            prev_layer.neurons.each do |prev_neuron|
-              neuron.synapses << Synapse.new(prev_neuron)
+            prev_layer.neurons.size.times do |idx|
+              neuron.synapses << Synapse.new(idx)
             end
           end
         end
@@ -27,12 +53,8 @@ module EvolveNet
 
     def clone
       network = NeuralNetwork.new
-      @layers.each_with_index do |layer, index|
-        if index == 0
-          network.layers << layer.clone
-        else
-          network.layers << layer.clone(network.layers[index - 1])
-        end
+      @layers.each do |layer|
+        network.layers << layer.clone
       end
       network
     end
@@ -54,7 +76,13 @@ module EvolveNet
     end
 
     def run(data : Array(Number))
-      @layers.each { |l| l.activate(data) }
+      @layers.each_with_index do |layer, index|
+        if index == 0
+          layer.activate(data)
+        else
+          layer.activate(@layers[index - 1])
+        end
+      end
       @layers.last.neurons.map { |n| n.activation }
     end
 

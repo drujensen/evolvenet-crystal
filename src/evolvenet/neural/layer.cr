@@ -1,15 +1,26 @@
 module EvolveNet
   class Layer
-    property :type, :neurons, :size, :function
+    property :type, :neurons, :size, :width, :height, :depth, :function
 
-    def initialize(@type : Symbol, size : Int32 = 0, @function : Symbol = :none)
+    def initialize(@type : Symbol, @size : Int32 = 0, @function : Symbol = :signoid)
+      @width = 0
+      @height = 0
+      @depth = 0
       @neurons = Array(Neuron).new(size) { Neuron.new(@function) }
     end
 
-    def clone(prev_layer : Layer? = nil)
+    def initialize(@type : Symbol, @width : Int32, @height : Int32, @depth : Int32, @function : Symbol = :conv)
+      @size = @width * @height * @depth
+      @neurons = Array(Neuron).new(@size) { Neuron.new(@function) }
+    end
+
+    def clone
       layer = Layer.new(@type, 0, @function)
+      layer.width = @width
+      layer.height = @height
+      layer.depth = @depth
       @neurons.each do |neuron|
-        layer.neurons << neuron.clone(prev_layer)
+        layer.neurons << neuron.clone
       end
       layer
     end
@@ -29,11 +40,13 @@ module EvolveNet
 
     def activate(data : Array(Number))
       @neurons.each_with_index do |neuron, idx|
-        if @type == :input
-          neuron.activate(data[idx])
-        else
-          neuron.activate
-        end
+        neuron.activate(data[idx])
+      end
+    end
+
+    def activate(prev_layer : Layer)
+      @neurons.each do |neuron|
+        neuron.activate(prev_layer)
       end
     end
   end
