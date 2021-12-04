@@ -46,6 +46,10 @@ puts network.run([0, 0])
 
 ## Development
 
+To run specs with threads:
+```
+CRYSTAL_WORKERS=16 crystal spec --release -Dpreview_mt
+```
 
 ## Contributing
 

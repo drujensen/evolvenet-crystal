@@ -1,3 +1,5 @@
+require "./spec_helper"
+
 describe EvolveNet::QuadradicNetwork do
   it "guesses your number squared" do
     input = Array(Array(Float64)).new
