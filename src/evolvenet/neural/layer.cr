@@ -9,7 +9,7 @@ module EvolveNet
       @neurons = Array(Neuron).new(size) { Neuron.new(@function) }
     end
 
-    def initialize(@type : Symbol, @width : Int32, @height : Int32, @depth : Int32, @function : Symbol = :conv)
+    def initialize(@type : Symbol, @width : Int32, @height : Int32, @depth : Int32, @function : Symbol = :relu)
       @size = @width * @height * @depth
       @neurons = Array(Neuron).new(@size) { Neuron.new(@function) }
     end
@@ -45,6 +45,9 @@ module EvolveNet
     end
 
     def activate(prev_layer : Layer)
+      if @type == :max
+        puts "neuron size: #{@neurons.size}"
+      end
       @neurons.each do |neuron|
         neuron.activate(prev_layer)
       end

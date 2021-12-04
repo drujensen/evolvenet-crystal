@@ -38,17 +38,23 @@ module EvolveNet
     end
 
     def activate(prev_layer : Layer)
-      sum = @synapses.sum { |s| s.weight * prev_layer.neurons[s.neuron_index].activation }
-      if @function == :none
-        @activation = none(sum + @bias)
-      elsif @function == :relu
-        @activation = relu(sum + @bias)
-      elsif @function == :sigmoid
-        @activation = sigmoid(sum + @bias)
-      elsif @function == :tanh
-        @activation = tanh(sum + @bias)
+      if @function == :max
+        max = 0_f64
+        @synapses.each { |s| max = (max < prev_layer.neurons[s.neuron_index].activation ? prev_layer.neurons[s.neuron_index].activation : max) }
+        @activation = none(max)
       else
-        raise "activation function #{@function} is not supported"
+        sum = @synapses.sum { |s| s.weight * prev_layer.neurons[s.neuron_index].activation }
+        if @function == :none
+          @activation = none(sum + @bias)
+        elsif @function == :relu
+          @activation = relu(sum + @bias)
+        elsif @function == :sigmoid
+          @activation = sigmoid(sum + @bias)
+        elsif @function == :tanh
+          @activation = tanh(sum + @bias)
+        else
+          raise "activation function #{@function} is not supported"
+        end
       end
     end
 
