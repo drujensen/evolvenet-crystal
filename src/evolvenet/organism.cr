@@ -20,15 +20,19 @@ module EvolveNet
       channel = Channel(Float64).new
 
       (0..generations).each do |gen|
-        @networks.each do |n|
+        # evaluate
+        @networks.each_with_index do |n, i|
           spawn do
             n.evaluate(data)
             channel.send(n.error)
           end
         end
-        @networks.size.times { channel.receive }
+        @networks.size.times { puts "#{channel.receive}" }
+
+        # sort networks - best to worst
         @networks.sort! { |a, b| a.error <=> b.error }
 
+        # determine error
         error : Float64 = @networks[0].error
         if error <= error_threshold
           puts "generation: #{gen} error: #{error}. below threshold. breaking."
@@ -37,16 +41,16 @@ module EvolveNet
           puts "generation: #{gen} error: #{error}"
         end
 
-        # randomize one bottom row
+        # randomize one row
         @networks[@three_forth].randomize
 
         # kill bottom quarter
-        @networks = @networks[0..@three_forth]
+        @networks = @networks[0...@three_forth]
 
         # clone top quarter
-        @networks[0..@one_forth].each { |n| @networks << n.clone }
+        @networks[0...@one_forth].each { |n| @networks << n.clone }
 
-        # punctuate all but top in order
+        # punctuate all but top by increasing magnitude
         @networks[1..3].each_with_index do |n, i|
           n.punctuate(i - 1)
         end
@@ -55,6 +59,7 @@ module EvolveNet
         (1...@networks.size).each { |n| @networks[n].mutate }
       end
 
+      # return the best network
       @networks.sort! { |a, b| a.error <=> b.error }
       @networks.first
     end
