@@ -4,8 +4,9 @@ describe EvolveNet::NeuralNetwork do
   it "works with cats and dogs" do
     network = EvolveNet::NeuralNetwork.new
     network.add_layer(:input, 48, 48, 3, :none)
-    network.add_layer(:conv, 46, 46, 3, :relu)
-    network.add_layer(:pool, 23, 23, 3, :max)
+    network.add_layer(:conv, 48, 48, 3, :relu)
+    network.add_layer(:pool, 24, 24, 6, :max)
+    network.add_layer(:filter, 24, 24, 6, :drop)
     network.add_layer(:output, 2, :sigmoid)
     network.fully_connect
 

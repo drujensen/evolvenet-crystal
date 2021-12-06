@@ -27,7 +27,7 @@ module EvolveNet
             channel.send(n.error)
           end
         end
-        @networks.size.times { puts "#{channel.receive}" }
+        @networks.size.times { channel.receive }
 
         # sort networks - best to worst
         @networks.sort! { |a, b| a.error <=> b.error }
