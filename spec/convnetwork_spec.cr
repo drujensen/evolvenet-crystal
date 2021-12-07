@@ -4,9 +4,7 @@ describe EvolveNet::NeuralNetwork do
   it "works with cats and dogs" do
     network = EvolveNet::NeuralNetwork.new
     network.add_layer(:input, 48, 48, 3, :none)
-    network.add_layer(:conv, 48, 48, 3, :relu)
-    network.add_layer(:pool, 24, 24, 6, :max)
-    network.add_layer(:filter, 24, 24, 6, :drop)
+    network.add_layer(:conv, 48, 48, 6, :relu)
     network.add_layer(:output, 2, :sigmoid)
     network.fully_connect
 
@@ -43,7 +41,7 @@ describe EvolveNet::NeuralNetwork do
     training = EvolveNet::Data.new(input, output)
 
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data, 5000, 0.1, 1)
+    network = organism.evolve(training.raw_data, 5000, 0.05, 1)
 
     tn = tp = fn = fp = 0
 

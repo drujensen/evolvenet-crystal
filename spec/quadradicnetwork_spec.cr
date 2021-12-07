@@ -13,7 +13,7 @@ describe EvolveNet::QuadradicNetwork do
 
     network = EvolveNet::QuadradicNetwork.new
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data, 10000)
+    network = organism.evolve(training.raw_data, 100000)
 
     puts "guesses your number squared"
     (1..10).each do |idx|

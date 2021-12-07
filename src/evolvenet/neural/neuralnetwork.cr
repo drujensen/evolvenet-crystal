@@ -53,7 +53,7 @@ module EvolveNet
                     next if height < padding && y == 0
                     next if (layer.height - height) <= padding && y == (window - 1)
                     prev_layer.depth.times do |d|
-                      neuron_index = (width * stride + x) * (height * stride + y) * d
+                      neuron_index = (width * stride + (x - padding)) * (height * stride + (y - padding)) * d
                       layer.neurons[pos].synapses << Synapse.new(neuron_index)
                     end
                   end

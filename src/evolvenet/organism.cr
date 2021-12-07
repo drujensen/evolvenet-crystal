@@ -56,7 +56,7 @@ module EvolveNet
         end
 
         # mutate all but the best and punctuated networks
-        (1...@networks.size).each { |n| @networks[n].mutate }
+        (4...@networks.size).each { |n| @networks[n].mutate }
       end
 
       # return the best network
