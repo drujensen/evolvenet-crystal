@@ -254,5 +254,35 @@ module EvolveNet
       puts "----------------------"
       puts "Accuracy: #{(tn + tp) / @inputs.size.to_f}"
     end
+
+    def raw_confusion_matrix(model)
+      tn = tp = fn = fp = 0
+
+      # determine accuracy
+      @inputs.each_with_index do |value, idx|
+        results = model.run(value)
+        if results[0] < 0.5
+          if @outputs[idx][0] < 0.5
+            tn += 1
+          else
+            fn += 1
+          end
+        else
+          if @outputs[idx][0] < 0.5
+            fp += 1
+          else
+            tp += 1
+          end
+        end
+      end
+
+      puts "Test size: #{@inputs.size}"
+      puts "----------------------"
+      puts "TN: #{tn} | FP: #{fp}"
+      puts "----------------------"
+      puts "FN: #{fn} | TP: #{tp}"
+      puts "----------------------"
+      puts "Accuracy: #{(tn + tp) / @inputs.size.to_f}"
+    end
   end
 end
