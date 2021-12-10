@@ -41,7 +41,6 @@ module EvolveNet
               (0...layer.width).each do |width|
                 pxl = (height * layer.width) + width
                 idx = (depth * layer.width * layer.height) + pxl
-                puts "idx: 0 < #{idx} > #{layer.neurons.size}"
                 (0...prev_layer.depth).each do |z|
                   d = (z * prev_layer.width * prev_layer.height)
                   window.times do |y|
@@ -52,7 +51,6 @@ module EvolveNet
                       start = d
                       stop = d + (prev_layer.width * prev_layer.height)
                       next if pos < start || pos >= stop
-                      puts "pos: #{start} < #{pos} > #{stop}"
                       layer.neurons[idx].synapses << Synapse.new(pos)
                     end
                   end
