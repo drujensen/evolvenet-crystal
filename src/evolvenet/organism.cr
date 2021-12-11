@@ -1,5 +1,9 @@
+require "log"
+
 module EvolveNet
   class Organism
+    Log = ::Log.for(self)
+
     property :networks
     @one_forth : Int32 = 1
     @two_forth : Int32 = 1
@@ -35,10 +39,10 @@ module EvolveNet
         # determine error
         error : Float64 = @networks[0].error
         if error <= error_threshold
-          puts "generation: #{gen} error: #{error}. below threshold. breaking."
+          Log.info { "generation: #{gen} error: #{error}. below threshold. breaking." }
           break
         elsif gen % log_each == 0
-          puts "generation: #{gen} error: #{error}"
+          Log.info { "generation: #{gen} error: #{error}" }
         end
 
         # randomize one row

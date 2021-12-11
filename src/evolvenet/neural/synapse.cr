@@ -1,5 +1,9 @@
+require "json"
+
 module EvolveNet
   class Synapse
+    include JSON::Serializable
+
     property :neuron_index, :weight
 
     def initialize(@neuron_index : Int32, @weight : Float64 = 0.0_f64)

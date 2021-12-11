@@ -168,27 +168,18 @@ module EvolveNet
 
     # Splits the receiver in a TrainingData and a TestData object according to factor
     def split(factor)
-      training_set_size = (data.size * factor).to_i
+      training_set_size = (raw_data.size * factor).to_i
 
-      # puts data
-      shuffled_data = data.shuffle
+      training_set = raw_data[0..training_set_size - 1]
+      test_set = raw_data[training_set_size..raw_data.size - 1]
 
-      # puts shuffled_data
-
-      training_set = shuffled_data[0..training_set_size - 1]
-      test_set = shuffled_data[training_set_size..shuffled_data.size - 1]
-
-      # puts training_set
-
-      Log.info { "Selected #{training_set.size} / #{data.size} rows for training" }
+      Log.info { "Selected #{training_set.size} / #{raw_data.size} rows for training" }
       training_data = EvolveNet::TrainingData.new(training_set.map { |el| el[0] }, training_set.map { |el| el[1] })
       training_data.labels = @labels
-      training_data.normalize_min_max
 
-      Log.info { "Selected #{test_set.size} / #{data.size} rows for testing" }
+      Log.info { "Selected #{test_set.size} / #{raw_data.size} rows for testing" }
       test_data = EvolveNet::TestData.new(test_set.map { |el| el[0] }, test_set.map { |el| el[1] })
       test_data.labels = @labels
-      test_data.normalize_min_max
 
       return training_data, test_data
     end

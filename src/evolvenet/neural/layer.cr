@@ -1,5 +1,9 @@
+require "json"
+
 module EvolveNet
   class Layer
+    include JSON::Serializable
+
     property :type, :neurons, :size, :width, :height, :depth, :function
 
     def initialize(@type : Symbol, @size : Int32 = 0, @function : Symbol = :signoid)

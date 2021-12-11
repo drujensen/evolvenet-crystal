@@ -1,6 +1,10 @@
+require "json"
+
 # y = mx + b
 module EvolveNet
   class LinearNetwork < Network
+    include JSON::Serializable
+
     property error : Float64
     property m : Float64
     property b : Float64

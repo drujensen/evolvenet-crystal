@@ -1,20 +1,21 @@
+require "json"
+
 module EvolveNet
   class Neuron
+    include JSON::Serializable
+
     property :activation, :bias, :synapses, :function
-    property drop_rate : Float64
 
     def initialize(@function : Symbol)
       @activation = 0_f64
       @bias = 0_f64
       @synapses = Array(Synapse).new
-      @drop_rate = rand(0.0..1.0)
     end
 
     def clone
       neuron = Neuron.new(@function)
       neuron.activation = @activation
       neuron.bias = @bias
-      neuron.drop_rate = @drop_rate
       @synapses.each do |synapse|
         neuron.synapses << synapse.clone
       end
@@ -62,8 +63,6 @@ module EvolveNet
           @activation = sigmoid(sum + @bias)
         elsif @function == :tanh
           @activation = tanh(sum + @bias)
-        elsif @function == :drop
-          @activation = drop(sum + @bias)
         else
           raise "activation function #{@function} is not supported"
         end
@@ -84,10 +83,6 @@ module EvolveNet
 
     def tanh(value : Number) : Float64
       ((Math::E**(value) - Math::E**(-value))/(Math::E**(value) + Math::E**(-value))).to_f64
-    end
-
-    def drop(value : Number) : Float64
-      @drop_rate < 0.3 ? 0.to_f64 : value.to_f64
     end
   end
 end

@@ -75,4 +75,27 @@ describe EvolveNet::LinearNetwork do
     puts "#{1000} = #{network.run([1000])[0].round_even.to_i}"
     puts "#{10000} = #{network.run([10000])[0].round_even.to_i}"
   end
+
+  it "can be serialized / deserialized via json" do
+    data = [
+      [[0], [5]],
+      [[1], [7]],
+      [[2], [9]],
+      [[3], [11]],
+      [[4], [13]],
+    ]
+
+    training = EvolveNet::Data.new(data)
+
+    network = EvolveNet::LinearNetwork.new
+    organism = EvolveNet::Organism.new(network)
+    network = organism.evolve(training.raw_data, 100000)
+
+    puts network.to_json
+    test = EvolveNet::LinearNetwork.from_json(network.to_json)
+
+    (1..10).each do |idx|
+      puts "#{idx} = #{test.run([idx])[0].round_even.to_i}"
+    end
+  end
 end

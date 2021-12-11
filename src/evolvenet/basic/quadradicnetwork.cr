@@ -1,6 +1,10 @@
+require "json"
+
 # y = ax**2 + bx + c
 module EvolveNet
   class QuadradicNetwork < Network
+    include JSON::Serializable
+
     property error : Float64
     property a : Float64
     property b : Float64

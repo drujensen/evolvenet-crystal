@@ -1,5 +1,9 @@
+require "json"
+
 module EvolveNet
   class NeuralNetwork < Network
+    include JSON::Serializable
+
     property :layers
     property error : Float64
 
@@ -35,7 +39,25 @@ module EvolveNet
           padding = 0
         end
 
-        if layer.type == :conv || layer.type == :pool || layer.type == :filter
+        if layer.type == :pool3
+          window = 3
+          stride = 3
+          padding = 0
+        end
+
+        if layer.type == :pool4
+          window = 4
+          stride = 4
+          padding = 0
+        end
+
+        if layer.type == :hidden || layer.type == :output
+          layer.neurons.each do |neuron|
+            prev_layer.neurons.size.times do |idx|
+              neuron.synapses << Synapse.new(idx)
+            end
+          end
+        else
           (0...layer.depth).each do |depth|
             (0...layer.height).each do |height|
               (0...layer.width).each do |width|
@@ -56,14 +78,6 @@ module EvolveNet
                   end
                 end
               end
-            end
-          end
-        end
-
-        if layer.type == :hidden || layer.type == :output
-          layer.neurons.each do |neuron|
-            prev_layer.neurons.size.times do |idx|
-              neuron.synapses << Synapse.new(idx)
             end
           end
         end

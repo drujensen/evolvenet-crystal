@@ -20,7 +20,6 @@ describe EvolveNet::NeuralNetwork do
     organism = EvolveNet::Organism.new(network)
     network = organism.evolve(training.normalized_data)
 
-    puts "works with xor"
     training.confusion_matrix(network)
   end
 
@@ -36,7 +35,6 @@ describe EvolveNet::NeuralNetwork do
     organism = EvolveNet::Organism.new(network)
     network = organism.evolve(training.normalized_data, 10000, 0.01)
 
-    puts "works with iris"
     training.confusion_matrix(network)
   end
 end
