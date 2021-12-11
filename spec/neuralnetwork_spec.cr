@@ -37,4 +37,26 @@ describe EvolveNet::NeuralNetwork do
 
     training.confusion_matrix(network)
   end
+  it "can be serialized / deserialized via json" do
+    network = EvolveNet::NeuralNetwork.new
+    network.add_layer(:input, 2)
+    network.add_layer(:hidden, 2)
+    network.add_layer(:output, 1)
+    network.fully_connect
+
+    data = [
+      [[0, 0], [0]],
+      [[0, 1], [1]],
+      [[1, 0], [1]],
+      [[1, 1], [0]],
+    ]
+    training = EvolveNet::Data.new(data)
+    training.normalize_min_max
+
+    organism = EvolveNet::Organism.new(network)
+    network = organism.evolve(training.normalized_data)
+    puts network.to_json
+    test = EvolveNet::NeuralNetwork.from_json(network.to_json)
+    training.confusion_matrix(test)
+  end
 end

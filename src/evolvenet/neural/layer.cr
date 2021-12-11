@@ -4,16 +4,29 @@ module EvolveNet
   class Layer
     include JSON::Serializable
 
-    property :type, :neurons, :size, :width, :height, :depth, :function
+    @[JSON::Field(key: "t")]
+    property type : String
+    @[JSON::Field(key: "n")]
+    property neurons : Array(Neuron)
+    @[JSON::Field(key: "s")]
+    property size : Int32
+    @[JSON::Field(key: "w")]
+    property width : Int32
+    @[JSON::Field(key: "h")]
+    property height : Int32
+    @[JSON::Field(key: "d")]
+    property depth : Int32
+    @[JSON::Field(key: "f")]
+    property function : String
 
-    def initialize(@type : Symbol, @size : Int32 = 0, @function : Symbol = :signoid)
+    def initialize(@type : String, @size : Int32 = 0, @function : String = "signoid")
       @width = 0
       @height = 0
       @depth = 0
       @neurons = Array(Neuron).new(size) { Neuron.new(@function) }
     end
 
-    def initialize(@type : Symbol, @width : Int32, @height : Int32, @depth : Int32, @function : Symbol = :relu)
+    def initialize(@type : String, @width : Int32, @height : Int32, @depth : Int32, @function : Symbol = "relu")
       @size = @width * @height * @depth
       @neurons = Array(Neuron).new(@size) { Neuron.new(@function) }
     end
@@ -49,9 +62,6 @@ module EvolveNet
     end
 
     def activate(prev_layer : Layer)
-      if @type == :max
-        puts "neuron size: #{@neurons.size}"
-      end
       @neurons.each do |neuron|
         neuron.activate(prev_layer)
       end

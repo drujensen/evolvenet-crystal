@@ -4,9 +4,16 @@ module EvolveNet
   class Neuron
     include JSON::Serializable
 
-    property :activation, :bias, :synapses, :function
+    @[JSON::Field(ignore: true)]
+    property activation : Float64 = 0_f64
+    @[JSON::Field(key: "b")]
+    property bias : Float64
+    @[JSON::Field(key: "s")]
+    property synapses : Array(Synapse)
+    @[JSON::Field(key: "f")]
+    property function : String
 
-    def initialize(@function : Symbol)
+    def initialize(@function : String)
       @activation = 0_f64
       @bias = 0_f64
       @synapses = Array(Synapse).new
@@ -42,26 +49,26 @@ module EvolveNet
     end
 
     def activate(prev_layer : Layer)
-      if @function == :min
+      if @function == "min"
         min = prev_layer.neurons[@synapses[0].neuron_index].activation
         @synapses.each { |s| min = (min > prev_layer.neurons[s.neuron_index].activation ? prev_layer.neurons[s.neuron_index].activation : min) }
         @activation = none(min)
-      elsif @function == :avg
+      elsif @function == "avg"
         sum = @synapses.sum { |s| prev_layer.neurons[s.neuron_index].activation }
         @activation = none(sum / @synapses.size)
-      elsif @function == :max
+      elsif @function == "max"
         max = 0_f64
         @synapses.each { |s| max = (max < prev_layer.neurons[s.neuron_index].activation ? prev_layer.neurons[s.neuron_index].activation : max) }
         @activation = none(max)
       else
         sum = @synapses.sum { |s| s.weight * prev_layer.neurons[s.neuron_index].activation }
-        if @function == :none
+        if @function == "none"
           @activation = none(sum + @bias)
-        elsif @function == :relu
+        elsif @function == "relu"
           @activation = relu(sum + @bias)
-        elsif @function == :sigmoid
+        elsif @function == "sigmoid"
           @activation = sigmoid(sum + @bias)
-        elsif @function == :tanh
+        elsif @function == "tanh"
           @activation = tanh(sum + @bias)
         else
           raise "activation function #{@function} is not supported"

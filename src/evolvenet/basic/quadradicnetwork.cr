@@ -5,6 +5,7 @@ module EvolveNet
   class QuadradicNetwork < Network
     include JSON::Serializable
 
+    @[JSON::Field(key: "e")]
     property error : Float64
     property a : Float64
     property b : Float64

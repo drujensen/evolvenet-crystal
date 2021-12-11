@@ -5,6 +5,7 @@ module EvolveNet
   class LinearNetwork < Network
     include JSON::Serializable
 
+    @[JSON::Field(key: "e")]
     property error : Float64
     property m : Float64
     property b : Float64

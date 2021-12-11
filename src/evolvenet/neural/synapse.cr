@@ -4,7 +4,10 @@ module EvolveNet
   class Synapse
     include JSON::Serializable
 
-    property :neuron_index, :weight
+    @[JSON::Field(key: "i")]
+    property neuron_index : Int32
+    @[JSON::Field(key: "w")]
+    property weight : Float64
 
     def initialize(@neuron_index : Int32, @weight : Float64 = 0.0_f64)
     end

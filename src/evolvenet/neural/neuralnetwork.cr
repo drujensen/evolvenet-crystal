@@ -4,7 +4,10 @@ module EvolveNet
   class NeuralNetwork < Network
     include JSON::Serializable
 
-    property :layers
+    @[JSON::Field(key: "l")]
+    property layers : Array(Layer)
+
+    @[JSON::Field(key: "e")]
     property error : Float64
 
     def initialize
@@ -13,11 +16,11 @@ module EvolveNet
     end
 
     def add_layer(type : Symbol, size : Int32, function : Symbol = :sigmoid)
-      @layers << Layer.new(type, size, function)
+      @layers << Layer.new(type.to_s, size, function.to_s)
     end
 
     def add_layer(type : Symbol, width : Int32, height : Int32, depth : Int32, function : Symbol = :relu)
-      @layers << Layer.new(type, width, height, depth, function)
+      @layers << Layer.new(type.to_s, width, height, depth, function.to_s)
     end
 
     def fully_connect
@@ -27,31 +30,31 @@ module EvolveNet
         stride = 1
         padding = 0
 
-        if layer.type == :conv
+        if layer.type == "conv"
           window = 3
           stride = 1
           padding = 1
         end
 
-        if layer.type == :pool
+        if layer.type == "pool"
           window = 2
           stride = 2
           padding = 0
         end
 
-        if layer.type == :pool3
+        if layer.type == "pool3"
           window = 3
           stride = 3
           padding = 0
         end
 
-        if layer.type == :pool4
+        if layer.type == "pool4"
           window = 4
           stride = 4
           padding = 0
         end
 
-        if layer.type == :hidden || layer.type == :output
+        if layer.type == "hidden" || layer.type == "output"
           layer.neurons.each do |neuron|
             prev_layer.neurons.size.times do |idx|
               neuron.synapses << Synapse.new(idx)
