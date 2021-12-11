@@ -5,7 +5,7 @@ module EvolveNet
     include JSON::Serializable
 
     @[JSON::Field(ignore: true)]
-    property activation : Float64 = 0_f64
+    property activation : Number = 0_f64
     @[JSON::Field(key: "b")]
     property bias : Float64
     @[JSON::Field(key: "s")]

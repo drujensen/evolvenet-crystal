@@ -26,7 +26,7 @@ module EvolveNet
       @neurons = Array(Neuron).new(size) { Neuron.new(@function) }
     end
 
-    def initialize(@type : String, @width : Int32, @height : Int32, @depth : Int32, @function : Symbol = "relu")
+    def initialize(@type : String, @width : Int32, @height : Int32, @depth : Int32, @function : String = "relu")
       @size = @width * @height * @depth
       @neurons = Array(Neuron).new(@size) { Neuron.new(@function) }
     end

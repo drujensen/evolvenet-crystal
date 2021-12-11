@@ -1,73 +1,34 @@
 require "./spec_helper"
 
 describe EvolveNet::NeuralNetwork do
-  it "works with cats and dogs" do
+  it "works with mnist" do
     network = EvolveNet::NeuralNetwork.new
-    network.add_layer(:input, 48, 48, 3, :none)
-    network.add_layer(:conv, 48, 48, 6, :relu)
-    network.add_layer(:output, 2, :sigmoid)
+    network.add_layer(:input, 28, 28, 1, :none)
+    network.add_layer(:pool3, 9, 9, 9, :relu)
+    network.add_layer(:output, 10, :sigmoid)
     network.fully_connect
 
-    outcome = {
-      "cat" => [1.0, 0.0],
-      "dog" => [0.0, 1.0],
-    }
-
-    input = Array(Array(Float64)).new
-    output = Array(Array(Float64)).new
-
-    ["cat", "dog"].each do |type|
-      files = Dir["/Users/drujensen/workspace/crystal/deeplearning/cats_dogs/train/#{type}.*.png"]
-      limit = 0
-      files.each do |file_name|
-        limit += 1
-        break if limit > 5
-
-        image = Image.new(file_name)
-        pixels = Array(Float64).new
-        3.times do |c|
-          image.height.times do |y|
-            image.width.times do |x|
-              pixels << image.data(x, y)[c]
-            end
-          end
-        end
-
-        input << pixels
-        output << outcome[type]
-      end
-    end
-
-    training = EvolveNet::Data.new(input, output)
-
+    data = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/../spec/test_data/mnist.csv", 1..785, 0)
+    training, testing = data.split(0.001)
     organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data, 5000, 0.05, 1)
+    network = organism.evolve(training.raw_data, 10000, 0.01)
 
-    tn = tp = fn = fp = 0
-
-    input.each_with_index do |test, idx|
-      results = network.run(test)
-      if results[0] < 0.5
-        if output[idx][0] == 0.0
-          tn += 1
-        else
-          fn += 1
-        end
-      else
-        if output[idx][0] == 0.0
-          fp += 1
-        else
-          tp += 1
-        end
+    tp = 0
+    training.raw_data.each do |data|
+      result = network.run(data[0])
+      if (result.index(result.max) == data[1].index(data[1].max))
+        tp += 1
       end
     end
+    puts "Accuracy: #{tp / training.size.to_f} Correct: #{tp} Size: #{training.size}"
 
-    puts "Training size: #{input.size}"
-    puts "----------------------"
-    puts "TN: #{tn} | FP: #{fp}"
-    puts "----------------------"
-    puts "FN: #{fn} | TP: #{tp}"
-    puts "----------------------"
-    puts "Accuracy: #{(tn + tp) / input.size.to_f}"
+    tp = 0
+    testing.raw_data.each do |data|
+      result = network.run(data[0])
+      if (result.index(result.max) == data[1].index(data[1].max))
+        tp += 1
+      end
+    end
+    puts "Accuracy: #{tp / testing.size.to_f} Correct: #{tp} Size: #{testing.size}"
   end
 end
