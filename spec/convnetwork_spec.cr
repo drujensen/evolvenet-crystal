@@ -4,14 +4,15 @@ describe EvolveNet::NeuralNetwork do
   it "works with mnist" do
     network = EvolveNet::NeuralNetwork.new
     network.add_layer(:input, 28, 28, 1, :none)
-    network.add_layer(:pool3, 9, 9, 9, :relu)
+    network.add_layer(:pool3, 9, 9, 10, :relu)
+    network.add_layer(:pool3, 3, 3, 20, :relu)
     network.add_layer(:output, 10, :sigmoid)
     network.fully_connect
 
-    data = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/../spec/test_data/mnist.csv", 1..785, 0)
-    training, testing = data.split(0.001)
-    organism = EvolveNet::Organism.new(network)
-    network = organism.evolve(training.raw_data, 10000, 0.01)
+    data = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/test_data/mnist.csv", 1..785, 0)
+    training, testing = data.split(0.1)
+    organism = EvolveNet::Organism.new(network, 64)
+    network = organism.evolve(training.raw_data, 5000, 0.01, 1)
 
     tp = 0
     training.raw_data.each do |data|

@@ -47,7 +47,7 @@ module EvolveNet
     end
 
     def mutate(mutation_rate : Float64)
-      neuron_mutation_rate = Math.min(0.01, mutation_rate / @neurons.size)
+      neuron_mutation_rate = mutation_rate / @neurons.size
       @neurons.each { |n| n.mutate(neuron_mutation_rate) }
     end
 

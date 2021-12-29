@@ -30,7 +30,7 @@ describe EvolveNet::NeuralNetwork do
     network.add_layer(:output, 3)
     network.fully_connect
 
-    training = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/../spec/test_data/iris.csv", 0..3, 4)
+    training = EvolveNet::Data.new_with_csv_input_target("#{File.dirname(__FILE__)}/test_data/iris.csv", 0..3, 4)
 
     organism = EvolveNet::Organism.new(network)
     network = organism.evolve(training.normalized_data, 10000, 0.01)

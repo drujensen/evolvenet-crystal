@@ -36,7 +36,8 @@ module EvolveNet
 
     def mutate(mutation_rate : Float64)
       @bias += rand(-mutation_rate..mutation_rate)
-      @synapses.each { |s| s.mutate(mutation_rate) }
+      synapse_mutation_rate = mutation_rate / @synapses.size
+      @synapses.each { |s| s.mutate(synapse_mutation_rate) }
     end
 
     def punctuate(pos : Int32)

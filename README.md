@@ -53,7 +53,7 @@ See the specs for other examples.
 
 To run specs with threads:
 ```
-CRYSTAL_WORKERS=16 crystal spec --release -Dpreview_mt
+LOG_LEVEL=DEBUG CRYSTAL_WORKERS=16 crystal spec --release -Dpreview_mt
 ```
 
 ## Contributing
