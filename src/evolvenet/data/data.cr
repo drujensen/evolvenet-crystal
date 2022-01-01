@@ -217,52 +217,59 @@ module EvolveNet
     end
 
     def confusion_matrix(model)
-      tn = tp = fn = fp = 0
+      tn = tp = fn = fp = ct = 0
 
       # determine accuracy
       @normalized_inputs.each_with_index do |value, idx|
-        results = model.run(value)
-        if results[0] < 0.5
-          if @normalized_outputs[idx][0] < 0.5
-            tn += 1
+        actual = model.run(value)
+        expected = @normalized_outputs[idx]
+        actual.each_with_index do |act, i|
+          ct += 1
+          if expected[i] > 0.5
+            if actual[i] > 0.5
+              tp += 1
+            else
+              fp += 1
+            end
           else
-            fn += 1
-          end
-        else
-          if @normalized_outputs[idx][0] < 0.5
-            fp += 1
-          else
-            tp += 1
+            if actual[i] < 0.5
+              tn += 1
+            else
+              fn += 1
+            end
           end
         end
       end
-
       puts "Test size: #{@inputs.size}"
       puts "----------------------"
       puts "TN: #{tn} | FP: #{fp}"
       puts "----------------------"
       puts "FN: #{fn} | TP: #{tp}"
       puts "----------------------"
-      puts "Accuracy: #{(tn + tp) / @inputs.size.to_f}"
+      puts "Accuracy: #{(tn + tp) / ct.to_f64}"
     end
 
     def raw_confusion_matrix(model)
-      tn = tp = fn = fp = 0
+      tn = tp = fn = fp = ct = 0
 
       # determine accuracy
       @inputs.each_with_index do |value, idx|
-        results = model.run(value)
-        if results[0] < 0.5
-          if @outputs[idx][0] < 0.5
-            tn += 1
+        actual = model.run(value)
+        expected = @outputs[idx]
+        actual.each_with_index do |act, idx|
+          ct += 1
+          if expected[idx] > 0.5
+            if actual[idx] > 0.5
+              tp += 1
+            else
+              fp += 1
+            end
           else
-            fn += 1
-          end
-        else
-          if @outputs[idx][0] < 0.5
-            fp += 1
-          else
-            tp += 1
+            if actual[idx] < 0.5
+              tn += 1
+            else
+              fn += 1
+            end
           end
         end
       end
@@ -273,7 +280,7 @@ module EvolveNet
       puts "----------------------"
       puts "FN: #{fn} | TP: #{tp}"
       puts "----------------------"
-      puts "Accuracy: #{(tn + tp) / @inputs.size.to_f}"
+      puts "Accuracy: #{(tn + tp).to_f64 / ct.to_f64}"
     end
   end
 end

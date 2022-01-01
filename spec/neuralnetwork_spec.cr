@@ -37,6 +37,7 @@ describe EvolveNet::NeuralNetwork do
 
     training.confusion_matrix(network)
   end
+
   it "can be serialized / deserialized via json" do
     network = EvolveNet::NeuralNetwork.new
     network.add_layer(:input, 2)
