@@ -45,9 +45,6 @@ module EvolveNet
           Log.info { "generation: #{gen} error: #{error}" }
         end
 
-        # randomize one row
-        @networks[@three_forth].randomize
-
         # kill bottom quarter
         @networks = @networks[0...@three_forth]
 
@@ -56,7 +53,7 @@ module EvolveNet
 
         # punctuate all but top by increasing magnitude
         @networks[1..3].each_with_index do |n, i|
-          n.punctuate(i - 1)
+          n.punctuate(i)
         end
 
         # mutate all but the best and punctuated networks

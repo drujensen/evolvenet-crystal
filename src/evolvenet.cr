@@ -1,3 +1,4 @@
+require "./evolvenet/network"
 require "./evolvenet/**"
 
 module EvolveNet
